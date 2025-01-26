@@ -4,21 +4,32 @@
 
 --SELECT
 /* 1. Write a query that returns everything in the customer table. */
-
+select *
+from customer;
 
 
 /* 2. Write a query that displays all of the columns and 10 rows from the cus- tomer table, 
 sorted by customer_last_name, then customer_first_ name. */
 
-
+select *
+from customer
+order by customer_last_name, customer_first_name
+limit 10;
 
 --WHERE
 /* 1. Write a query that returns all customer purchases of product IDs 4 and 9. */
 -- option 1
 
+select*
+from customer_purchases
+where product_id=4 OR product_id=9
+
 
 -- option 2
 
+select*
+from customer_purchases
+where product_id in (4,9); 
 
 
 /*2. Write a query that returns all customer purchases and a new calculated column 'price' (quantity * cost_to_customer_per_qty), 
@@ -27,11 +38,18 @@ filtered by vendor IDs between 8 and 10 (inclusive) using either:
 	2.  one condition using BETWEEN
 */
 -- option 1
+select *
+, quantity*cost_to_customer_per_qty AS price
+from customer_purchases
+where vendor_id >=8 and vendor_id <=10;
 
 
 -- option 2
 
-
+select *
+, quantity*cost_to_customer_per_qty AS price
+from customer_purchases
+where vendor_id between 8 and 10
 
 --CASE
 /* 1. Products can be sold by the individual unit or by bulk measures like lbs. or oz. 
@@ -39,19 +57,45 @@ Using the product table, write a query that outputs the product_id and product_n
 columns and add a column called prod_qty_type_condensed that displays the word “unit” 
 if the product_qty_type is “unit,” and otherwise displays the word “bulk.” */
 
+select product_id, product_name, 
+case when product_qty_type='unit'
+then 'unit'
+else 'bulk'
+END
+as prod_qty_type_condensed
+from product;
 
 
 /* 2. We want to flag all of the different types of pepper products that are sold at the market. 
 add a column to the previous query called pepper_flag that outputs a 1 if the product_name 
 contains the word “pepper” (regardless of capitalization), and otherwise outputs 0. */
 
+select product_id, product_name, 
+CASE 
+WhEN product_qty_type='unit'
+then 'unit'
+else 'bulk'
+END
+AS prod_qty_type_condensed
+
+,Case when product_name like '%pepper%' 
+then 1
+else 0
+END
+as pepper_flag
+
+from product
 
 
 --JOIN
 /* 1. Write a query that INNER JOINs the vendor table to the vendor_booth_assignments table on the 
 vendor_id field they both have in common, and sorts the result by vendor_name, then market_date. */
 
-
+Select *
+From vendor_booth_assignments vba
+Inner Join vendor v
+On  vba.vendor_id=v.vendor_id
+Order by v.vendor_name, vba.market_date;
 
 
 /* SECTION 3 */
@@ -60,6 +104,9 @@ vendor_id field they both have in common, and sorts the result by vendor_name, t
 /* 1. Write a query that determines how many times each vendor has rented a booth 
 at the farmer’s market by counting the vendor booth assignments per vendor_id. */
 
+select vendor_id, count (vendor_id)
+From vendor_booth_assignments 
+group by vendor_id;
 
 
 /* 2. The Farmer’s Market Customer Appreciation Committee wants to give a bumper 
@@ -69,6 +116,16 @@ of customers for them to give stickers to, sorted by last name, then first name.
 HINT: This query requires you to join two tables, use an aggregate function, and use the HAVING keyword. */
 
 
+select * 
+from customer c
+join 
+(SELECT customer_id, sum(quantity*cost_to_customer_per_qty) as total_spent
+from customer_purchases
+group by customer_id 
+having total_spent>=2000)
+As x
+on c.customer_id=x.customer_id
+order by c.customer_last_name, c.customer_first_name;
 
 --Temp Table
 /* 1. Insert the original vendor table into a temp.new_vendor and then add a 10th vendor: 
@@ -82,7 +139,12 @@ When inserting the new vendor, you need to appropriately align the columns to be
 VALUES(col1,col2,col3,col4,col5) 
 */
 
+drop table if exists temp.new_vendor
+;create temp table temp.new_vendor as 
+select * from vendor;
 
+insert into temp.new_vendor
+values (10, 'Thomass Superfood Store', 'Fresh Focused store', 'Thomas', 'Rosenthal');
 
 -- Date
 /*1. Get the customer_id, month, and year (in separate columns) of every purchase in the customer_purchases table.
@@ -90,11 +152,24 @@ VALUES(col1,col2,col3,col4,col5)
 HINT: you might need to search for strfrtime modifers sqlite on the web to know what the modifers for month 
 and year are! */
 
-
+SELECT 
+    customer_id,
+    STRFTIME('%m', market_date) AS purchase_month,
+    STRFTIME('%Y', market_date) AS purchase_year
+FROM customer_purchases;
 
 /* 2. Using the previous query as a base, determine how much money each customer spent in April 2022. 
 Remember that money spent is quantity*cost_to_customer_per_qty. 
 
 HINTS: you will need to AGGREGATE, GROUP BY, and filter...
 but remember, STRFTIME returns a STRING for your WHERE statement!! */
+
+SELECT 
+    customer_id,
+    SUM(quantity * cost_to_customer_per_qty) AS total_spent
+from customer_purchases
+WHERE 
+    STRFTIME('%m', market_date) = '04'
+    and STRFTIME('%Y', market_date) = '2022'
+GROUP BY customer_id
 
