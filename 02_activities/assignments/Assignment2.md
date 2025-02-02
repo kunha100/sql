@@ -54,7 +54,7 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 **HINT:** search type 1 vs type 2 slowly changing dimensions. 
 
 ```
-Your answer...
+Type 1 table which overwrites might contain other key information of customers that might not change often (i.e. name, phone number...etc) and type 2 table which retain changes and keep recording new information might be more useful when connected to individual orders. 
 ```
 
 ***
@@ -182,5 +182,5 @@ Consider, for example, concepts of labour, bias, LLM proliferation, moderating c
 
 
 ```
-Your thoughts...
+The ethical issues important to this story is that seemingly “objective” outcomes created by machines (i.e. LLM AI models like Chat-GPT) are in their very essence designed to reflect certain value judgements accumulated over years. The course I TAed last semester (Introduction to the Modern Middle East) had an assignment that criticizes historiography of Chat GPT on particular historical events in the Middle East. Pretending to be objective and non-judgemental, Chat GPT created results that are very biased upon particular segments of people rather than recognizing important discussions in the field. By equalizing “different” opinions, it contributes to disrupt the accumulated knowledge and discussion in the field, generalizing particularities and contingencies of the event. It also has preference over certain source materials reflecting certain group of people speaking particular language. When people believe such outcomes are objective and unbaised because it was created by non-interested machines, they do not see all the human labor and human judgements involved in designing the machine. One of the most sensational book in the field of STS lately, was critiques on quantitative analysis. The author claimed that the design of the data-sets already reflect ethical judgement of its builder so that it ends up highlighting certain elements when people do quantitative analysis based on such data sets (i.e. race in the United States). It had lots of criticisms by those who use quantitative methodologies, but it gave a lot of people foods for thoughts. I believe it is important for educational institutions to equip people with critical perspectives on this matter, but some students did their Chat GPT assignments that asked to criticize Chat GPT’s historiography, by Chat GPT!
 ```
